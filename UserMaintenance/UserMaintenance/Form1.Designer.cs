@@ -55,7 +55,7 @@ namespace UserMaintenance
             this.lblLastName.Name = "lblLastName";
             this.lblLastName.Size = new System.Drawing.Size(64, 13);
             this.lblLastName.TabIndex = 1;
-            this.lblLastName.Text = "Vezetéknév";
+            this.lblLastName.Text = Resource1.LastName;
             // 
             // lblFirstName
             // 
@@ -64,7 +64,7 @@ namespace UserMaintenance
             this.lblFirstName.Name = "lblFirstName";
             this.lblFirstName.Size = new System.Drawing.Size(60, 13);
             this.lblFirstName.TabIndex = 2;
-            this.lblFirstName.Text = "Keresztnév";
+            this.lblFirstName.Text = Resource1.FirstName;
             // 
             // txtLastName
             // 
