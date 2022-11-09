@@ -54,6 +54,7 @@ namespace UserMaintenance
             this.lblFullName.Name = "lblFullName";
             this.lblFullName.Size = new System.Drawing.Size(0, 13);
             this.lblFullName.TabIndex = 1;
+            this.lblFullName.Text = Resource1.FullName;
             // 
             // txtFullName
             // 
@@ -68,7 +69,7 @@ namespace UserMaintenance
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(202, 30);
             this.btnAdd.TabIndex = 5;
-            this.btnAdd.Text = global::UserMaintenance.Resource1.Add;
+            this.btnAdd.Text = Resource1.Add;
             this.btnAdd.UseMnemonic = false;
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
@@ -79,7 +80,7 @@ namespace UserMaintenance
             this.btnWrite.Name = "btnWrite";
             this.btnWrite.Size = new System.Drawing.Size(202, 30);
             this.btnWrite.TabIndex = 6;
-            this.btnWrite.Text = global::UserMaintenance.Resource1.Write;
+            this.btnWrite.Text = Resource1.Write;
             this.btnWrite.UseMnemonic = false;
             this.btnWrite.UseVisualStyleBackColor = true;
             this.btnWrite.Click += new System.EventHandler(this.btnWrite_Click);
