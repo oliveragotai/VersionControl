@@ -52,5 +52,17 @@ namespace UserMaintenance
 
             }
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            ListBox.SelectedObjectCollection selectedItems = new ListBox.SelectedObjectCollection(listUsers);
+            selectedItems = listUsers.SelectedItems;
+
+            if (listUsers.SelectedIndex != -1)
+            {
+                for (int i = selectedItems.Count - 1; i >= 0; i--)
+                    users.Remove(users[i]);
+            }
+        }
     }
 }
