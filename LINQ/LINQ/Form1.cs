@@ -19,7 +19,7 @@ namespace LINQ
 
         void LoadData(string fileName)
         {
-            StreamReader sr = new StreamReader(fileName);
+            StreamReader sr = new StreamReader(fileName, Encoding.Default);
             sr.ReadLine();
             while (!sr.EndOfStream)
             {
@@ -27,22 +27,22 @@ namespace LINQ
                 string countryName = line[2];
                 string brandName = line[0];
                 Country country = AddCountry(countryName);
-                AddBrand(brandName);
-                AddRamen(line, country);
+                Brand brand = AddBrand(brandName);
+                AddRamen(line, country, brand);
             }
             sr.Close();
         }
 
-        private void AddRamen(string[] line, Country country)
+        private void AddRamen(string[] line, Country country, Brand brand)
         {
             var ramen = new Ramen()
             {
                 ID = ramens.Count + 1,
-                Brand = line[0],
+                Brand = brand,
                 Name = line[1],
                 CountryFK = country.ID,
                 Country = country,
-                Stars = Convert.ToDouble(line[3])
+                Stars = Convert.ToDouble(line[3].Replace(",","."))
             };
             ramens.Add(ramen);
         }
@@ -62,7 +62,7 @@ namespace LINQ
             return currentCountry;
         }
 
-        private void AddBrand(string brandName)
+        private Brand AddBrand(string brandName)
         {
             var currentBrand = brands.Where(i => i.Name.Equals(brandName)).FirstOrDefault();
             if (currentBrand == null)
@@ -74,6 +74,7 @@ namespace LINQ
                 };
                 brands.Add(currentBrand);
             }
+            return currentBrand;
         }
 
         private void GetCountries()
@@ -97,6 +98,27 @@ namespace LINQ
         private void txtCountryFilter_TextChanged(object sender, EventArgs e)
         {
             GetCountries();
+        }
+
+        private void listCountries_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var country = (Country)((ListBox)sender).SelectedItem;
+            if (country == null)
+                return;
+            var countryRamens = from r in ramens
+                                where r.CountryFK == country.ID
+                                select r;
+            var groupedRamens = from r in countryRamens
+                                group r.Stars by r.Brand.Name into g
+                                select new
+                                {
+                                    BrandName = g.Key,
+                                    AverageRating = Math.Round(g.Average(), 2)
+                                };
+            var orderedGroups = from g in groupedRamens
+                                orderby g.AverageRating descending
+                                select g;
+            dataGridView1.DataSource = orderedGroups.ToList();
         }
     }
 }

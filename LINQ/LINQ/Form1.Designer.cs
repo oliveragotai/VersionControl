@@ -31,6 +31,8 @@ namespace LINQ
         {
             this.listCountries = new System.Windows.Forms.ListBox();
             this.txtCountryFilter = new System.Windows.Forms.TextBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // listCountries
@@ -40,6 +42,7 @@ namespace LINQ
             this.listCountries.Name = "listCountries";
             this.listCountries.Size = new System.Drawing.Size(262, 485);
             this.listCountries.TabIndex = 0;
+            this.listCountries.SelectedIndexChanged += new System.EventHandler(this.listCountries_SelectedIndexChanged);
             // 
             // txtCountryFilter
             // 
@@ -49,15 +52,25 @@ namespace LINQ
             this.txtCountryFilter.TabIndex = 1;
             this.txtCountryFilter.TextChanged += new System.EventHandler(this.txtCountryFilter_TextChanged);
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(280, 38);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(555, 485);
+            this.dataGridView1.TabIndex = 2;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(847, 535);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.txtCountryFilter);
             this.Controls.Add(this.listCountries);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -67,6 +80,7 @@ namespace LINQ
 
         private System.Windows.Forms.ListBox listCountries;
         private System.Windows.Forms.TextBox txtCountryFilter;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 
