@@ -29,13 +29,44 @@ namespace LINQ
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.listCountries = new System.Windows.Forms.ListBox();
+            this.txtCountryFilter = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // listCountries
+            // 
+            this.listCountries.FormattingEnabled = true;
+            this.listCountries.Location = new System.Drawing.Point(12, 38);
+            this.listCountries.Name = "listCountries";
+            this.listCountries.Size = new System.Drawing.Size(262, 485);
+            this.listCountries.TabIndex = 0;
+            // 
+            // txtCountryFilter
+            // 
+            this.txtCountryFilter.Location = new System.Drawing.Point(13, 13);
+            this.txtCountryFilter.Name = "txtCountryFilter";
+            this.txtCountryFilter.Size = new System.Drawing.Size(261, 20);
+            this.txtCountryFilter.TabIndex = 1;
+            this.txtCountryFilter.TextChanged += new System.EventHandler(this.txtCountryFilter_TextChanged);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(847, 535);
+            this.Controls.Add(this.txtCountryFilter);
+            this.Controls.Add(this.listCountries);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.ListBox listCountries;
+        private System.Windows.Forms.TextBox txtCountryFilter;
     }
 }
 

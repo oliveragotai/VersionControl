@@ -76,12 +76,27 @@ namespace LINQ
             }
         }
 
+        private void GetCountries()
+        {
+            var countriesList = from c in countries
+                                where c.Name.Contains(txtCountryFilter.Text)
+                                orderby c.Name
+                                select c;
+            listCountries.DataSource = countriesList.ToList();
+        }
+
 
         public Form1()
         {
             InitializeComponent();
             LoadData("ramen.csv");
-            Console.WriteLine("breakpoint");
+            listCountries.DisplayMember = "Name";
+            GetCountries();
+        }
+
+        private void txtCountryFilter_TextChanged(object sender, EventArgs e)
+        {
+            GetCountries();
         }
     }
 }
