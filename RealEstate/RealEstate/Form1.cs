@@ -19,7 +19,7 @@ namespace RealEstate
         public Form1()
         {
             InitializeComponent();
-            LoadData
+            LoadData();
         }
 
         private void LoadData()
