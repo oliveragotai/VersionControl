@@ -21,6 +21,17 @@ namespace RealEstate
         Excel.Workbook xlWB;
         Excel.Worksheet xlSheet;
 
+        string[] headers = new string[] {
+                "Kód",
+                "Eladó",
+                "Oldal",
+                "Kerület",
+                "Lift",
+                "Szobák száma",
+                "Alapterület (m2)",
+                "Ár (mFt)",
+                "Négyzetméter ár (Ft/m2)" };
+
         public Form1()
         {
             InitializeComponent();
@@ -32,6 +43,7 @@ namespace RealEstate
                 xlWB = xlApp.Workbooks.Add(Missing.Value);
                 xlSheet = xlWB.ActiveSheet;
                 CreateTable();
+                FormatTable();
                 xlApp.Visible = true;
                 xlApp.UserControl = true;
             }
@@ -47,18 +59,37 @@ namespace RealEstate
             }
         }
 
+        private void FormatTable()
+        {
+            int lastRowID = xlSheet.UsedRange.Rows.Count;
+
+            //Fejléc formázása
+            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+            headerRange.Font.Bold = true;
+            headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            headerRange.EntireColumn.AutoFit();
+            headerRange.RowHeight = 40;
+            headerRange.Interior.Color = Color.LightBlue;
+            headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+
+            //Értékcellák formázása
+            Excel.Range dataRange= xlSheet.get_Range(GetCell(2, 1), GetCell(lastRowID, headers.Length));
+            dataRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+
+            //Első oszlop formázása
+            Excel.Range firstColDataRange = xlSheet.get_Range(GetCell(2, 1), GetCell(lastRowID, 1));
+            firstColDataRange.Font.Bold = true;
+            firstColDataRange.Interior.Color = Color.LightYellow;
+
+            //Utolsó oszlop formázása
+            Excel.Range lastColDataRange = xlSheet.get_Range(GetCell(2, headers.Length), GetCell(lastRowID, headers.Length));
+            lastColDataRange.Interior.Color = Color.LightGreen;
+            lastColDataRange.NumberFormat = "0.00";
+        }
+
         private void CreateTable()
         {
-            string[] headers = new string[] {
-                "Kód",
-                "Eladó",
-                "Oldal",
-                "Kerület",
-                "Lift",
-                "Szobák száma",
-                "Alapterület (m2)",
-                "Ár (mFt)",
-                "Négyzetméter ár (Ft/m2)" };
             for (int i = 0; i < headers.Length; i++)
             {
                 xlSheet.Cells[1, i + 1] = headers[i];
@@ -75,7 +106,7 @@ namespace RealEstate
                 values[counter, 5] = f.NumberOfRooms;
                 values[counter, 6] = f.FloorArea;
                 values[counter, 7] = f.Price;
-                values[counter, 8] = "=(" + GetCell(counter + 2, 7) +"*1000000)/" + GetCell(counter + 2, 6);
+                values[counter, 8] = "=(" + GetCell(counter + 2, 8) +"*1000000)/" + GetCell(counter + 2, 7);
                 counter++;
             }
 
