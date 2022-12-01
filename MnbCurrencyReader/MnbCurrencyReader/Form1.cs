@@ -7,22 +7,47 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Xml;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MnbCurrencyReader
 {
     public partial class Form1 : Form
     {
         BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
 
         public Form1()
         {
             InitializeComponent();
+            dataGridView1.DataSource = Rates;
+            chartRateData.DataSource = Rates;
+            comboBoxCurrency.DataSource = Currencies;
+
+            GetCurrencies();
             RefreshData();
+        }
+
+        void GetCurrencies()
+        {
+            var client = new MNBArfolyamServiceSoapClient();
+            var requestBody = new GetCurrenciesRequestBody();
+
+            var response = client.GetCurrencies(requestBody);
+
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(response.GetCurrenciesResult);
+            Console.WriteLine(response.GetCurrenciesResult);
+            foreach (XmlElement element in xml.DocumentElement.ChildNodes[0])
+            {
+                Currencies.Add(element.InnerText);
+            }
+            comboBoxCurrency.DataSource = Currencies;
         }
 
         public string Task3() 
@@ -31,7 +56,7 @@ namespace MnbCurrencyReader
 
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = comboBoxCurrency.SelectedItem.ToString(),
+                currencyNames = comboBoxCurrency?.SelectedItem?.ToString() ?? "EUR",
                 startDate = dateTimePickerStart.Value.ToString("yyyy-MM-dd"),
                 endDate = dateTimePickerEnd.Value.ToString("yyyy-MM-dd")
             };
@@ -48,23 +73,28 @@ namespace MnbCurrencyReader
             xml.LoadXml(result);
             foreach (XmlElement element in xml.DocumentElement)
             {
-                var rate = new RateData();
-                Rates.Add(rate);
+                XmlElement childElement = ((XmlElement)element.ChildNodes[0]);
 
-                rate.Date = DateTime.Parse(element.GetAttribute("date"));
+                if (childElement == null)
+                {
+                    continue;
+                }
 
-                var childElement = (XmlElement)element.ChildNodes[0];
-                rate.Currency = childElement.GetAttribute("curr");
-
-                var unit = decimal.Parse(childElement.GetAttribute("unit"));
+                decimal unit = decimal.Parse(childElement.GetAttribute("unit"));
 
                 NumberFormatInfo numberFormatWithComma = new NumberFormatInfo();
                 numberFormatWithComma.NumberDecimalSeparator = ",";
 
-                var value = decimal.Parse(childElement.InnerText, numberFormatWithComma);
+                decimal value = Math.Round(decimal.Parse(childElement.InnerText, numberFormatWithComma), 2);
 
-                if (unit != 0)
-                    rate.Value = value / unit;
+                RateData rate = new RateData
+                {
+                    Date = Convert.ToDateTime(element.GetAttribute("date")),
+                    Currency = childElement.GetAttribute("curr"),
+                    Value = unit != 0 ? value / unit : value,
+                };
+
+                Rates.Add(rate);
             }
         }
 
@@ -88,9 +118,6 @@ namespace MnbCurrencyReader
             chartArea.AxisX.MajorGrid.Enabled = false;
             chartArea.AxisY.MajorGrid.Enabled = false;
             chartArea.AxisY.IsStartedFromZero = false;
-
-            dataGridView1.DataSource = Rates;
-            chartRateData.DataSource = Rates;
         }
 
         private void dateTimePickerStart_ValueChanged(object sender, EventArgs e)
