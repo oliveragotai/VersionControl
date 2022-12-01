@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Xml;
 
 namespace MnbCurrencyReader
@@ -20,9 +21,8 @@ namespace MnbCurrencyReader
 
         public Form1()
         {
-            string result = Task3();
-            Task5(result);
             InitializeComponent();
+            RefreshData();
         }
 
         public string Task3() 
@@ -31,9 +31,9 @@ namespace MnbCurrencyReader
 
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = "EUR",
-                startDate = "2020-01-01",
-                endDate = "2020-06-30"
+                currencyNames = comboBoxCurrency.SelectedItem.ToString(),
+                startDate = dateTimePickerStart.Value.ToString("yyyy-MM-dd"),
+                endDate = dateTimePickerEnd.Value.ToString("yyyy-MM-dd")
             };
 
             var response = mnbService.GetExchangeRates(request);
@@ -66,6 +66,46 @@ namespace MnbCurrencyReader
                 if (unit != 0)
                     rate.Value = value / unit;
             }
+        }
+
+        public void RefreshData()
+        {
+            Rates.Clear();
+
+            string result = Task3();
+            Task5(result);
+
+            var series = chartRateData.Series[0];
+            series.ChartType = SeriesChartType.Line;
+            series.XValueMember = "Date";
+            series.YValueMembers = "Value";
+            series.BorderWidth = 2;
+
+            var legend = chartRateData.Legends[0];
+            legend.Enabled = false;
+
+            var chartArea = chartRateData.ChartAreas[0];
+            chartArea.AxisX.MajorGrid.Enabled = false;
+            chartArea.AxisY.MajorGrid.Enabled = false;
+            chartArea.AxisY.IsStartedFromZero = false;
+
+            dataGridView1.DataSource = Rates;
+            chartRateData.DataSource = Rates;
+        }
+
+        private void dateTimePickerStart_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void dateTimePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void comboBoxCurrency_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }
