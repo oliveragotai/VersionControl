@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace MnbCurrencyReader
 {
@@ -18,16 +20,13 @@ namespace MnbCurrencyReader
 
         public Form1()
         {
-            Task3();
+            string result = Task3();
+            Task5(result);
             InitializeComponent();
         }
 
-        public void Task3() 
+        public string Task3() 
         {
-            // A változó deklarációk jobb oldalán a "var" egy dinamikus változó típus.
-            // A "var" változó az első értékadás pillanatában a kapott érték típusát veszi fel, és később nem változtatható.
-            // Jelen példa első sora tehát ekvivalens azzal, ha a "var" helyélre a MNBArfolyamServiceSoapClient-t írjuk.
-            // Ebben a formában azonban olvashatóbb a kód, és változtatás esetén elég egy helyen átírni az osztály típusát.
             var mnbService = new MNBArfolyamServiceSoapClient();
 
             var request = new GetExchangeRatesRequestBody()
@@ -37,13 +36,36 @@ namespace MnbCurrencyReader
                 endDate = "2020-06-30"
             };
 
-            // Ebben az esetben a "var" a GetExchangeRates visszatérési értékéből kapja a típusát.
-            // Ezért a response változó valójában GetExchangeRatesResponseBody típusú.
             var response = mnbService.GetExchangeRates(request);
 
-            // Ebben az esetben a "var" a GetExchangeRatesResult property alapján kapja a típusát.
-            // Ezért a result változó valójában string típusú.
             var result = response.GetExchangeRatesResult;
+            return result;
+        }
+
+        public void Task5(string result)
+        {
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(result);
+            foreach (XmlElement element in xml.DocumentElement)
+            {
+                var rate = new RateData();
+                Rates.Add(rate);
+
+                rate.Date = DateTime.Parse(element.GetAttribute("date"));
+
+                var childElement = (XmlElement)element.ChildNodes[0];
+                rate.Currency = childElement.GetAttribute("curr");
+
+                var unit = decimal.Parse(childElement.GetAttribute("unit"));
+
+                NumberFormatInfo numberFormatWithComma = new NumberFormatInfo();
+                numberFormatWithComma.NumberDecimalSeparator = ",";
+
+                var value = decimal.Parse(childElement.InnerText, numberFormatWithComma);
+
+                if (unit != 0)
+                    rate.Value = value / unit;
+            }
         }
     }
 }

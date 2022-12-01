@@ -9,7 +9,7 @@ namespace MnbCurrencyReader.Entities
     public class RateData
     {
         public DateTime Date { get; set; }
-        public String Currency { get; set; }
-        public Decimal Value { get; set; }
+        public string Currency { get; set; }
+        public decimal Value { get; set; }
     }
 }
